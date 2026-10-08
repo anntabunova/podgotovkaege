@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр ЕГЭ по английскому языку</title>
+    <style>
+        :root {
+            --primary: #007AFF;
+            --primary-dark: #0051D5;
+            --success: #34C759;
+            --error: #FF3B30;
+            --warning: #FF9500;
+            --text-primary: #1C1C1E;
+            --text-secondary: #8E8E93;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F2F2F7;
+            --border: #E5E5EA;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            min-height: 44px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+
+        .timer-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .timer-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .question-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--bg-primary);
+            min-height: 44px;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: var(--bg-secondary);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(0, 122, 255, 0.05);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(52, 199, 89, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: rgba(255, 59, 48, 0.1);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        .feedback {
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-top: 16px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(52, 199, 89, 0.1);
+            border-left: 4px solid var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 59, 48, 0.1);
+            border-left: 4px solid var(--error);
+        }
+
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feedback.correct .feedback-title {
+            color: var(--success);
+        }
+
+        .feedback.incorrect .feedback-title {
+            color: var(--error);
+        }
+
+        .result-card {
+            text-align: center;
+            padding: 32px;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .score-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .error-list {
+            margin-top: 24px;
+        }
+
+        .error-item {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .error-item h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .error-item p {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .info-box {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-box h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .nav-buttons .btn {
+            flex: 1;
+        }
+
+        @media (max-width: 640px) {
+            #app {
+                padding: 12px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .badge-primary {
+            background: rgba(0, 122, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--success);
+        }
+
+        .badge-error {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--error);
+        }
+    </style>
+</head>
+<body>
+    <main id="app" role="main" aria-label="Тренажёр ЕГЭ по английскому языку"></main>
+
+    <script>
+        // === CONSTANTS ===
+        const LESSON_CONTENT = {
+            grammar: {
+                title: 'Грамматика: Времена глаголов',
+                content: `
+                    <div class="section">
+                        <h3>Present Simple vs Present Continuous</h3>
+                        <div class="info-box">
+                            <h4>Present Simple</h4>
+                            <p><strong>Используется для:</strong></p>
+                            <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                <li>Регулярных действий (I <strong>go</strong> to school every day)</li>
+                                <li>Фактов и истин (Water <strong>boils</strong> at 100°C)</li>
+                                <li>Расписаний (The train <strong>leaves</strong> at 9 AM)</li>
+                            </ul>
+                            <p><strong>Маркеры:</strong> always, usually, often, sometimes, never, every day/week/month</p>
+                        </div>
+                        <div class="info-box">
+                            <h4>Present Continuous</h4>
+                            <p><strong>Используется для:</strong></p>
+                            <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                <li>Действий в момент речи (I <strong>am reading</strong> now)</li>
+                                <li>Временных ситуаций (I <strong>am staying</strong> with friends this week)</li>
+                                <li>Запланированных действий в будущем (I <strong>am meeting</strong> him tomorrow)</li>
+                            </ul>
+                            <p><strong>Маркеры:</strong> now, at the moment, currently, today, this week</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Past Simple vs Present Perfect</h3>
+                        <div class="info-box">
+                            <h4>Past Simple</h4>
+                            <p><strong>Используется для:</strong></p>
+                            <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                <li>Завершённых действий в прошлом (I <strong>visited</strong> Paris last year)</li>
+                                <li>Последовательности действий в прошлом (He <strong>came</strong> in and <strong>sat</strong> down)</li>
+                            </ul>
+                            <p><strong>Маркеры:</strong> yesterday, last week/month/year, ago, in 2020</p>
+                        </div>
+                        <div class="info-box">
+                            <h4>Present Perfect</h4>
+                            <p><strong>Используется для:</strong></p>
+                            <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                <li>Действий, связанных с настоящим (I <strong>have lost</strong> my keys - они до сих пор потеряны)</li>
+                                <li>Опыта жизни (I <strong>have been</strong> to Japan twice)</li>
+                                <li>Результата в настоящем (She <strong>has finished</strong> her homework)</li>
+                            </ul>
+                            <p><strong>Маркеры:</strong> already, yet, just, ever, never, since, for, recently</p>
+                        </div>
+                    </div>
+                `
+            },
+            vocabulary: {
+                title: 'Лексика: Фразовые глаголы',
+                content: `
+                    <div class="section">
+                        <h3>Популярные фразовые глаголы для ЕГЭ</h3>
+                        <div class="info-box">
+                            <h4>GET</h4>
+                            <ul style="margin-left: 20px;">
+                                <li><strong>get up</strong> - вставать (I get up at 7 AM)</li>
+                                <li><strong>get along with</strong> - ладить с кем-то (She gets along with her colleagues)</li>
+                                <li><strong>get over</strong> - преодолеть, выздороветь (He got over his illness)</li>
+                                <li><strong>get rid of</strong> - избавиться от (Get rid of old clothes)</li>
+                            </ul>
+                        </div>
+                        <div class="info-box">
+                            <h4>TAKE</h4>
+                            <ul style="margin-left: 20px;">
+                                <li><strong>take off</strong> - взлетать; снимать одежду (The plane takes off at 6 PM)</li>
+                                <li><strong>take after</strong> - быть похожим на (She takes after her mother)</li>
+                                <li><strong>take up</strong> - начать заниматься (I took up painting)</li>
+                                <li><strong>take over</strong> - захватить контроль (The company was taken over)</li>
+                            </ul>
+                        </div>
+                        <div class="info-box">
+                            <h4>LOOK</h4>
+                            <ul style="margin-left: 20px;">
+                                <li><strong>look for</strong> - искать (I'm looking for my keys)</li>
+                                <li><strong>look forward to</strong> - с нетерпением ждать (I look forward to meeting you)</li>
+                                <li><strong>look after</strong> - заботиться о (She looks after her grandmother)</li>
+                                <li><strong>look up</strong> - искать в словаре (Look up the word in the dictionary)</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            examForms: {
+                title: 'Правила заполнения бланков ЕГЭ',
+                content: `
+                    <div class="section">
+                        <h3>Общие правила</h3>
+                        <div class="info-box">
+                            <h4>⚠️ Важно!</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Используйте только <strong>чёрную гелевую ручку</strong></li>
+                                <li>Пишите <strong>ЗАГЛАВНЫМИ печатными буквами</strong></li>
+                                <li>Каждый символ в отдельной клетке</li>
+                                <li>Не выходите за границы клеток</li>
+                                <li>Не используйте корректор</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Бланк №1 (задания с кратким ответом)</h3>
+                        <div class="info-box">
+                            <h4>Правила записи:</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Ответ вписывается посимвольно</li>
+                                <li>Пробелы между словами НЕ ставятся</li>
+                                <li>Дефисы и другие знаки пишутся в отдельных клетках</li>
+                                <li>Если ответ не помещается - продолжайте на обороте</li>
+                            </ul>
+                            <p><strong>Пример:</strong> "I have been" → I HAVE BEEN (без пробелов)</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Бланк №2 (задания с развёрнутым ответом)</h3>
+                        <div class="info-box">
+                            <h4>Правила записи:</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Пишите разборчиво и аккуратно</li>
+                                <li>Соблюдайте структуру (абзацы, пунктуация)</li>
+                                <li>Используйте только чёрную ручку</li>
+                                <li>Зачёркивания не допускаются</li>
+                                <li>Если ошибка - аккуратно зачёркните и напишите рядом</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Типичные ошибки при заполнении</h3>
+                        <div class="info-box">
+                            <h4>❌ Избегайте:</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Строчных букв (всегда ЗАГЛАВНЫЕ)</li>
+                                <li>Пробелов между словами в кратких ответах</li>
+                                <li>Выхода за границы клеток</li>
+                                <li>Использования карандаша или цветных ручек</li>
+                                <li>Неразборчивого почерка</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        const QUESTIONS = [
+            {
+                id: 1,
+                section: 'grammar',
+                question: 'She ___ to the gym every morning before work.',
+                options: ['goes', 'is going', 'go', 'went'],
+                correct: 0,
+                explanation: 'Present Simple используется для регулярных действий. Маркер "every morning" указывает на повторяющееся действие.'
+            },
+            {
+                id: 2,
+                section: 'grammar',
+                question: 'Look! The children ___ in the park.',
+                options: ['play', 'plays', 'are playing', 'played'],
+                correct: 2,
+                explanation: 'Present Continuous используется для действий в момент речи. Маркер "Look!" указывает на действие, происходящее сейчас.'
+            },
+            {
+                id: 3,
+                section: 'grammar',
+                question: 'I ___ this book last weekend.',
+                options: ['have read', 'read', 'am reading', 'reads'],
+                correct: 1,
+                explanation: 'Past Simple используется для завершённых действий в прошлом. Маркер "last weekend" указывает на конкретное время в прошлом.'
+            },
+            {
+                id: 4,
+                section: 'grammar',
+                question: 'She ___ already ___ her homework.',
+                options: ['has / finished', 'have / finished', 'is / finishing', 'was / finishing'],
+                correct: 0,
+                explanation: 'Present Perfect используется для действий, связанных с настоящим. Маркер "already" указывает на Present Perfect.'
+            },
+            {
+                id: 5,
+                section: 'vocabulary',
+                question: 'I need to ___ my old clothes. They don\'t fit anymore.',
+                options: ['get rid of', 'get over', 'get along with', 'get up'],
+                correct: 0,
+                explanation: '"Get rid of" означает "избавиться от". Контекст указывает на необходимость избавиться от старой одежды.'
+            },
+            {
+                id: 6,
+                section: 'vocabulary',
+                question: 'The plane will ___ at 6 PM, so we need to be at the airport by 4.',
+                options: ['take off', 'take up', 'take over', 'take after'],
+                correct: 0,
+                explanation: '"Take off" означает "взлетать" (о самолёте). Контекст говорит о времени вылета самолёта.'
+            },
+            {
+                id: 7,
+                section: 'vocabulary',
+                question: 'I\'m really ___ to meeting you next week!',
+                options: ['looking forward', 'looking for', 'looking after', 'looking up'],
+                correct: 0,
+                explanation: '"Look forward to" означает "с нетерпением ждать". Выражение используется для ожидания чего-то приятного.'
+            },
+            {
+                id: 8,
+                section: 'vocabulary',
+                question: 'She ___ her grandmother every weekend.',
+                options: ['looks after', 'looks for', 'looks up', 'looks forward to'],
+                correct: 0,
+                explanation: '"Look after" означает "заботиться о". Контекст указывает на регулярную заботу о бабушке.'
+            },
+            {
+                id: 9,
+                section: 'examForms',
+                question: 'Как правильно записать ответ "I have been" в бланк №1?',
+                options: ['I have been', 'I HAVE BEEN', 'Ihavebeen', 'I HAVE BEEN (с пробелами)'],
+                correct: 2,
+                explanation: 'В бланке №1 ответы записываются ЗАГЛАВНЫМИ буквами БЕЗ пробелов между словами. Правильный ответ: IHAVEBEEN'
+            },
+            {
+                id: 10,
+                section: 'examForms',
+                question: 'Какой ручкой нужно заполнять бланки ЕГЭ?',
+                options: ['Любой ручкой', 'Чёрной гелевой ручкой', 'Синей шариковой ручкой', 'Карандашом'],
+                correct: 1,
+                explanation: 'Бланки ЕГЭ заполняются только чёрной гелевой ручкой. Использование других инструментов запрещено.'
+            }
+        ];
+
+        // === STATE ===
+        const state = {
+            currentScreen: 'start', // start, lesson, quiz, results, errors
+            currentLesson: 0,
+            currentQuestion: 0,
+            answers: [],
+            selectedOption: null,
+            showFeedback: false,
+            timer: 1200, // 20 минут в секундах
+            timerInterval: null,
+            score: 0,
+            errors: []
+        };
+
+        // === RENDER FUNCTIONS ===
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = '';
+
+            switch(state.currentScreen) {
+                case 'start':
+                    renderStartScreen();
+                    break;
+                case 'lesson':
+                    renderLessonScreen();
+                    break;
+                case 'quiz':
+                    renderQuizScreen();
+                    break;
+                case 'results':
+                    renderResultsScreen();
+                    break;
+                case 'errors':
+                    renderErrorsScreen();
+                    break;
+            }
+        }
+
+        function renderStartScreen() {
+            const app = document.getElementById('app');
+            const html = `
+                <div class="screen active">
+                    <div class="card">
+                        <h1>Тренажёр ЕГЭ по английскому языку</h1>
+                        <p class="text-secondary">Подготовка к экзамену: грамматика, лексика и правила заполнения бланков</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Что вас ждёт</h2>
+                        <div class="section">
+                            <h3>📚 Теоретический блок</h3>
+                            <p>Подробное объяснение ключевых тем:</p>
+                            <ul style="margin-left: 20px; margin-bottom: 12px;">
+                                <li>Времена глаголов (Present Simple, Present Continuous, Past Simple, Present Perfect)</li>
+                                <li>Фразовые глаголы (get, take, look)</li>
+                                <li>Правила заполнения бланков ЕГЭ</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>📝 Тестирование</h3>
+                            <p>10 вопросов с выбором ответа:</p>
+                            <ul style="margin-left: 20px; margin-bottom: 12px;">
+                                <li>Мгновенная обратная связь после каждого ответа</li>
+                                <li>Подробные объяснения правильных ответов</li>
+                                <li>Таймер на 20 минут</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>📊 Анализ результатов</h3>
+                            <p>После завершения теста вы получите:</p>
+                            <ul style="margin-left: 20px;">
+                                <li>Общий результат и процент правильных ответов</li>
+                                <li>Детальный разбор каждой ошибки</li>
+                                <li>Возможность повторной отработки ошибок</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Рекомендации</h2>
+                        <div class="info-box">
+                            <h4>💡 Советы для эффективной подготовки</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>Внимательно изучите теоретический материал перед тестом</li>
+                                <li>Обращайте внимание на маркеры времён</li>
+                                <li>Запоминайте фразовые глаголы в контексте</li>
+                                <li>Практикуйте заполнение бланков по правилам</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" onclick="startLesson()">Начать подготовку</button>
+                </div>
+            `;
+            app.innerHTML = html;
+        }
+
+        function renderLessonScreen() {
+            const app = document.getElementById('app');
+            const lessons = Object.values(LESSON_CONTENT);
+            const currentLesson = lessons[state.currentLesson];
+            
+            const html = `
+                <div class="screen active">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${((state.currentLesson + 1) / lessons.length) * 100}%"></div>
+                    </div>
+                    
+                    <div class="card">
+                        <span class="badge badge-primary">Урок ${state.currentLesson + 1} из ${lessons.length}</span>
+                        <h2>${currentLesson.title}</h2>
+                        ${currentLesson.content}
+                    </div>
+                    
+                    <div class="nav-buttons">
+                        ${state.currentLesson > 0 ? '<button class="btn btn-secondary" onclick="previousLesson()">Назад</button>' : ''}
+                        ${state.currentLesson < lessons.length - 1 
+                            ? '<button class="btn btn-primary" onclick="nextLesson()">Далее</button>'
+                            : '<button class="btn btn-primary" onclick="startQuiz()">Перейти к тесту</button>'
+                        }
+                    </div>
+                </div>
+            `;
+            app.innerHTML = html;
+        }
+
+        function renderQuizScreen() {
+            const app = document.getElementById('app');
+            const question = QUESTIONS[state.currentQuestion];
+            const progress = ((state.currentQuestion + 1) / QUESTIONS.length) * 100;
+            
+            const html = `
+                <div class="screen active">
+                    <div class="timer">
+                        <span class="timer-label">Вопрос ${state.currentQuestion + 1} из ${QUESTIONS.length}</span>
+                        <span class="timer-value" id="timer">${formatTime(state.timer)}</span>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    
+                    <div class="question-card">
+                        <div class="question-number">Вопрос ${question.id}</div>
+                        <div class="question-text">${question.question}</div>
+                        
+                        <div class="options">
+                            ${question.options.map((option, index) => `
+                                <label class="option ${state.selectedOption === index ? 'selected' : ''} ${state.showFeedback ? (index === question.correct ? 'correct' : (state.selectedOption === index ? 'incorrect' : '')) : ''}">
+                                    <input type="radio" name="answer" value="${index}" ${state.selectedOption === index ? 'checked' : ''} ${state.showFeedback ? 'disabled' : ''} onchange="selectOption(${index})">
+                                    ${option}
+                                </label>
+                            `).join('')}
+                        </div>
+                        
+                        ${state.showFeedback ? `
+                            <div class="feedback ${state.selectedOption === question.correct ? 'correct' : 'incorrect'} show">
+                                <div class="feedback-title">${state.selectedOption === question.correct ? '✓ Правильно!' : '✗ Неправильно'}</div>
+                                <p>${question.explanation}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${!state.showFeedback && state.selectedOption !== null ? `
+                        <button class="btn btn-primary btn-block" onclick="submitAnswer()">Проверить ответ</button>
+                    ` : ''}
+                    
+                    ${state.showFeedback ? `
+                        <button class="btn btn-primary btn-block" onclick="nextQuestion()">
+                            ${state.currentQuestion < QUESTIONS.length - 1 ? 'Следующий вопрос' : 'Завершить тест'}
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            app.innerHTML = html;
+            
+            // Запуск таймера если это первый вопрос
+            if (state.currentQuestion === 0 && state.selectedOption === null && !state.showFeedback) {
+                startTimer();
+            }
+        }
+
+        function renderResultsScreen() {
+            const app = document.getElementById('app');
+            const percentage = Math.round((state.score / QUESTIONS.length) * 100);
+            
+            let message = '';
+            let badgeClass = '';
+            if (percentage >= 80) {
+                message = 'Отличный результат! Вы хорошо подготовлены к ЕГЭ.';
+                badgeClass = 'badge-success';
+            } else if (percentage >= 60) {
+                message = 'Хороший результат, но есть над чем работать.';
+                badgeClass = 'badge-primary';
+            } else {
+                message = 'Рекомендуем повторить теоретический материал и пройти тест снова.';
+                badgeClass = 'badge-error';
+            }
+            
+            const html = `
+                <div class="screen active">
+                    <div class="card result-card">
+                        <span class="badge ${badgeClass}">Тест завершён</span>
+                        <h2>Ваши результаты</h2>
+                        <div class="score">${state.score} / ${QUESTIONS.length}</div>
+                        <div class="score-label">${percentage}% правильных ответов</div>
+                        <p style="margin-top: 16px;">${message}</p>
+                    </div>
+                    
+                    ${state.errors.length > 0 ? `
+                        <div class="card">
+                            <h3>Разбор ошибок</h3>
+                            <div class="error-list">
+                                ${state.errors.map(error => `
+                                    <div class="error-item">
+                                        <h4>Вопрос ${error.id}</h4>
+                                        <p><strong>Вопрос:</strong> ${error.question}</p>
+                                        <p><strong>Ваш ответ:</strong> ${error.userAnswer}</p>
+                                        <p><strong>Правильный ответ:</strong> ${error.correctAnswer}</p>
+                                        <p><strong>Объяснение:</strong> ${error.explanation}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="resetQuiz()">Пройти тест заново</button>
+                        ${state.errors.length > 0 ? '<button class="btn btn-primary" onclick="practiceErrors()">Отработать ошибки</button>' : ''}
+                    </div>
+                </div>
+            `;
+            app.innerHTML = html;
+        }
+
+        function renderErrorsScreen() {
+            const app = document.getElementById('app');
+            const errorQuestions = QUESTIONS.filter(q => state.errors.find(e => e.id === q.id));
+            
+            if (errorQuestions.length === 0) {
+                state.currentScreen = 'results';
+                render();
+                return;
+            }
+            
+            const currentError = errorQuestions[state.currentQuestion];
+            const progress = ((state.currentQuestion + 1) / errorQuestions.length) * 100;
+            
+            const html = `
+                <div class="screen active">
+                    <div class="timer">
+                        <span class="timer-label">Отработка ошибок: ${state.currentQuestion + 1} из ${errorQuestions.length}</span>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    
+                    <div class="question-card">
+                        <div class="question-number">Вопрос ${currentError.id}</div>
+                        <div class="question-text">${currentError.question}</div>
+                        
+                        <div class="options">
+                            ${currentError.options.map((option, index) => `
+                                <label class="option ${state.selectedOption === index ? 'selected' : ''} ${state.showFeedback ? (index === currentError.correct ? 'correct' : (state.selectedOption === index ? 'incorrect' : '')) : ''}">
+                                    <input type="radio" name="answer" value="${index}" ${state.selectedOption === index ? 'checked' : ''} ${state.showFeedback ? 'disabled' : ''} onchange="selectOption(${index})">
+                                    ${option}
+                                </label>
+                            `).join('')}
+                        </div>
+                        
+                        ${state.showFeedback ? `
+                            <div class="feedback ${state.selectedOption === currentError.correct ? 'correct' : 'incorrect'} show">
+                                <div class="feedback-title">${state.selectedOption === currentError.correct ? '✓ Правильно!' : '✗ Неправильно'}</div>
+                                <p>${currentError.explanation}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${!state.showFeedback && state.selectedOption !== null ? `
+                        <button class="btn btn-primary btn-block" onclick="submitErrorAnswer()">Проверить ответ</button>
+                    ` : ''}
+                    
+                    ${state.showFeedback ? `
+                        <button class="btn btn-primary btn-block" onclick="nextErrorQuestion()">
+                            ${state.currentQuestion < errorQuestions.length - 1 ? 'Следующая ошибка' : 'Завершить'}
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            app.innerHTML = html;
+        }
+
+        // === HANDLERS ===
+        function startLesson() {
+            state.currentScreen = 'lesson';
+            state.currentLesson = 0;
+            render();
+        }
+
+        function nextLesson() {
+            const lessons = Object.values(LESSON_CONTENT);
+            if (state.currentLesson < lessons.length - 1) {
+                state.currentLesson++;
+                render();
+            }
+        }
+
+        function previousLesson() {
+            if (state.currentLesson > 0) {
+                state.currentLesson--;
+                render();
+            }
+        }
+
+        function startQuiz() {
+            state.currentScreen = 'quiz';
+            state.currentQuestion = 0;
+            state.answers = [];
+            state.selectedOption = null;
+            state.showFeedback = false;
+            state.timer = 1200;
+            state.score = 0;
+            state.errors = [];
+            render();
+        }
+
+        function selectOption(index) {
+            state.selectedOption = index;
+            render();
+        }
+
+        function submitAnswer() {
+            const question = QUESTIONS[state.currentQuestion];
+            const isCorrect = state.selectedOption === question.correct;
+            
+            state.answers.push({
+                questionId: question.id,
+                selectedOption: state.selectedOption,
+                isCorrect: isCorrect
+            });
+            
+            if (isCorrect) {
+                state.score++;
+            } else {
+                state.errors.push({
+                    id: question.id,
+                    question: question.question,
+                    userAnswer: question.options[state.selectedOption],
+                    correctAnswer: question.options[question.correct],
+                    explanation: question.explanation
+                });
+            }
+            
+            state.showFeedback = true;
+            render();
+        }
+
+        function nextQuestion() {
+            if (state.currentQuestion < QUESTIONS.length - 1) {
+                state.currentQuestion++;
+                state.selectedOption = null;
+                state.showFeedback = false;
+                render();
+            } else {
+                stopTimer();
+                state.currentScreen = 'results';
+                render();
+            }
+        }
+
+        function submitErrorAnswer() {
+            state.showFeedback = true;
+            render();
+        }
+
+        function nextErrorQuestion() {
+            const errorQuestions = QUESTIONS.filter(q => state.errors.find(e => e.id === q.id));
+            if (state.currentQuestion < errorQuestions.length - 1) {
+                state.currentQuestion++;
+                state.selectedOption = null;
+                state.showFeedback = false;
+                render();
+            } else {
+                state.currentScreen = 'results';
+                state.currentQuestion = 0;
+                render();
+            }
+        }
+
+        function practiceErrors() {
+            state.currentScreen = 'errors';
+            state.currentQuestion = 0;
+            state.selectedOption = null;
+            state.showFeedback = false;
+            render();
+        }
+
+        function resetQuiz() {
+            state.currentScreen = 'start';
+            state.currentLesson = 0;
+            state.currentQuestion = 0;
+            state.answers = [];
+            state.selectedOption = null;
+            state.showFeedback = false;
+            state.timer = 1200;
+            state.score = 0;
+            state.errors = [];
+            stopTimer();
+            render();
+        }
+
+        // === TIMER ===
+        function startTimer() {
+            if (state.timerInterval) return;
+            
+            state.timerInterval = setInterval(() => {
+                state.timer--;
+                updateTimerDisplay();
+                
+                if (state.timer <= 0) {
+                    stopTimer();
+                    alert('Время вышло! Тест завершён.');
+                    state.currentScreen = 'results';
+                    render();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const timerElement = document.getElementById('timer');
+            if (timerElement) {
+                timerElement.textContent = formatTime(state.timer);
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // === INIT ===
+        function init() {
+            render();
+        }
+
+        // Запуск приложения
+        init();
+    </script>
+</body>
+</html>
